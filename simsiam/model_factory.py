@@ -1,4 +1,6 @@
+import torch
 from torch import nn
+import timm
 from .resnet_cifar import ResNet18, ResNet34, ResNet50, ResNet101, ResNet152
 
 
@@ -79,7 +81,8 @@ class SimSiam(nn.Module):
                 'resnet34': ResNet34(),
                 'resnet50': ResNet50(),
                 'resnet101': ResNet101(),
-                'resnet152': ResNet152()}[backbone_name]
+                'resnet152': ResNet152(),
+                'timm_cifar_resnet34': cifar_resnet34(num_classes=128)}[backbone_name]
 
     def forward(self, im_aug1, im_aug2):
 
@@ -91,9 +94,28 @@ class SimSiam(nn.Module):
 
         return {'z1': z1, 'z2': z2, 'p1': p1, 'p2': p2}
 
+# timmのモデルを使用したもの
+def resnet(depth, num_classes, pretrained=False):
+    return timm.create_model(
+        f"resnet{depth}", pretrained=pretrained, num_classes=num_classes
+    )
 
+def resnet34(num_classes, pretrained=False):
+    return resnet(depth=34, num_classes=num_classes, pretrained=pretrained)
 
+def cifar_resnet34(num_classes, pretrained=False):
+    model = resnet34(num_classes=num_classes, pretrained=pretrained)
+    model.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, bias=False)
+    model.maxpool = nn.Identity()
+    init_weights(model=model)
+    return model
 
-
-
-
+@torch.jit.ignore
+def init_weights(model, zero_init_last=True):
+    for _, m in model.named_modules():
+        if isinstance(m, nn.Conv2d):
+            nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
+    if zero_init_last:
+        for m in model.modules():
+            if hasattr(m, "zero_init_last"):
+                m.zero_init_last()

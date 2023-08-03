@@ -22,7 +22,7 @@ parser.add_argument('--exp_dir', type=str, help='path to experiment directory')
 parser.add_argument('--trial', type=str, default='1', help='trial id')
 parser.add_argument('--img_dim', default=32, type=int)
 
-parser.add_argument('--arch', default='resnet18', help='model name is used for training')
+parser.add_argument('--arch', default='timm_cifar_resnet34', help='model name is used for training')
 
 parser.add_argument('--feat_dim', default=2048, type=int, help='feature dimension')
 parser.add_argument('--num_proj_layers', type=int, default=2, help='number of projection layer')

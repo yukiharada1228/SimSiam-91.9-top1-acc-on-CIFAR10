@@ -1,0 +1,1 @@
+python main.py --data_root dataset --exp_dir result --learning_rate 0.06 --epochs 800 --weight_decay 5e-4 --momentum 0.9 --batch_size 512 --gpu 0
