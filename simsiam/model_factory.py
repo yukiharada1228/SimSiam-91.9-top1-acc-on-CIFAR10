@@ -82,7 +82,7 @@ class SimSiam(nn.Module):
                 'resnet50': ResNet50(),
                 'resnet101': ResNet101(),
                 'resnet152': ResNet152(),
-                'timm_cifar_resnet34': cifar_resnet34(num_classes=128)}[backbone_name]
+                'cifar_resnet34': cifar_resnet34(num_classes=128)}[backbone_name]
 
     def forward(self, im_aug1, im_aug2):
 
